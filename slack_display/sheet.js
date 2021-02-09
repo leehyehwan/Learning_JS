@@ -20,20 +20,23 @@ function appendPre(message) {
  */
 function listMajors() {
   gapi.client.sheets.spreadsheets.values.get({
-    // spreadsheetId: '1IgZ0Fci_Lw5TSEGbVtVaQ_daaEsDh5nDJ4Fiu-tRQm4',
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    // range: 'kiss!A2:D',
-    range: 'Class Data!A2:E'
+    spreadsheetId: '1IgZ0Fci_Lw5TSEGbVtVaQ_daaEsDh5nDJ4Fiu-tRQm4',
+    // spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
+    range: 'kiss!A2:D',
+    // range: 'Class Data!A2:E'
   }).then(function(response) {
     var range = response.result;
-    console.log(range)
-    // const slackdata = response.result.values
     if (range.values.length > 0) {
-      appendPre('Name, Major:');
       for (i = 0; i < range.values.length; i++) {
         var row = range.values[i];
         // Print columns A and E, which correspond to indices 0 and 4.
-        appendPre(row[0] + ', ' + row[4]);
+        let slackImg = row[0];
+        let slackName = row[1];
+        let slackText = row[3];
+
+        image.src = slackImg
+        name.innerText = slackName
+        text.innerText = slackText
       }
     } else {
       appendPre('No data found.');
