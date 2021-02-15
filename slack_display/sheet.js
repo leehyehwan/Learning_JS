@@ -1,47 +1,46 @@
 const image = document.querySelector(".img");
-const name = document.querySelector(".header");
+const name = document.querySelector(".title");
 const text = document.querySelector(".text")
+const time = document.querySelector(".time")
+const info = document.querySelector(".speed")
 
-/**
- * Append a pre element to the body containing the given message
- * as its text node. Used to display the results of the API call.
- *
- * @param {string} message Text to be placed in pre element.
- */
-function appendPre(message) {
-  var pre = document.getElementById('content');
-  var textContent = document.createTextNode(message + '\n');
-  pre.appendChild(textContent);
+let TIME = 1000
+let COUNT = 10
+
+let j = 1
+
+function setText(row) {
+  let slackImg = row[3];
+  let slackName = row[4];
+  let slackTime = row[5];
+  let slackText = row[6];
+
+  image.src = slackImg
+  time.innerText = slackTime
+  name.innerText = slackName
+  text.innerText = slackText
 }
 
-/**
- * Print the names and majors of students in a sample spreadsheet:
- * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
- */
+
 function listMajors() {
   gapi.client.sheets.spreadsheets.values.get({
     spreadsheetId: '1IgZ0Fci_Lw5TSEGbVtVaQ_daaEsDh5nDJ4Fiu-tRQm4',
-    // spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'kiss!A2:D',
-    // range: 'Class Data!A2:E'
-  }).then(function(response) {
-    var range = response.result;
-    if (range.values.length > 0) {
-      for (i = 0; i < range.values.length; i++) {
-        var row = range.values[i];
-        // Print columns A and E, which correspond to indices 0 and 4.
-        let slackImg = row[0];
-        let slackName = row[1];
-        let slackText = row[3];
+    range: 'kiss!A:H',
+  })
+  .then(function(call) {
+    var range = call.result;
 
-        image.src = slackImg
-        name.innerText = slackName
-        text.innerText = slackText
-      }
-    } else {
-      appendPre('No data found.');
+    let displayInfo = range.values[1]
+      TIME = parseInt(displayInfo[0])*1000
+      COUNT = parseInt(displayInfo[1])
+
+    info.innerText = `${TIME/1000}초 씩 ${COUNT}개`;
+    
+    for (i = range.values.length-COUNT; i < range.values.length; i++) {
+      var row = range.values[i];
+      setTimeout(setText,TIME*j,row);
+      console.log(j)
+      j++
     }
-  }, function(response) {
-    appendPre('Error: ' + response.result.error.message);
   });
 }
