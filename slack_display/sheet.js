@@ -21,8 +21,7 @@ function setText(row) {
   text.innerText = slackText
 }
 
-
-function listMajors() {
+function getList() {
   gapi.client.sheets.spreadsheets.values.get({
     spreadsheetId: '1IgZ0Fci_Lw5TSEGbVtVaQ_daaEsDh5nDJ4Fiu-tRQm4',
     range: 'kiss!A:H',
@@ -36,11 +35,16 @@ function listMajors() {
 
     info.innerText = `${TIME/1000}초 씩 ${COUNT}개`;
     
-    for (i = range.values.length-COUNT; i < range.values.length; i++) {
+    for (i = COUNT+3; i >= 3; i--) {
       var row = range.values[i];
       setTimeout(setText,TIME*j,row);
-      console.log(j)
       j++
     }
   });
+}
+
+
+function listMajors() {
+  getList()
+  setInterval(getList,TIME*(COUNT-1))
 }
